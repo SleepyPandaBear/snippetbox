@@ -7,6 +7,11 @@ import (
     "os"
 )
 
+type application struct {
+    infoLog *log.Logger
+    errorLog *log.Logger
+}
+
 func main() {
     // Parse value from command line (value must be dereferenced when used)
     ip := flag.String("ip", ":8080", "Ip address and port of the application")
@@ -18,10 +23,20 @@ func main() {
     infoLog := log.New(os.Stdout, "INFO:\t", log.Ldate | log.Ltime)
     errorLog := log.New(os.Stderr, "ERROR:\t", log.Ldate | log.Ltime | log.Lshortfile)
 
+    // Our application struct so we can use our custom loggers from handlers.go
+    // file. If our handlers are scattered across multiple files, we can use
+    // function closures (first function accepts app and it returns another
+    // function with ResponseWriter and Request) and pass application struct as
+    // argument.
+    app := &application {
+        infoLog: infoLog,
+        errorLog: errorLog,
+    }
+
     mux := http.NewServeMux()
-    mux.HandleFunc("/", home)
-    mux.HandleFunc("/snippet", showSnippet)
-    mux.HandleFunc("/snippet/create", createSnippet)
+    mux.HandleFunc("/", app.home)
+    mux.HandleFunc("/snippet", app.showSnippet)
+    mux.HandleFunc("/snippet/create", app.createSnippet)
 
     // Serve static files under ./ui/static
     fs := http.FileServer(http.Dir("./ui/static"))
@@ -30,7 +45,7 @@ func main() {
 
     // We need to create our own `Server` struct, so we can use our own error
     // logger.
-    srv := &http.Server{
+    srv := &http.Server {
         Addr: *ip,
         ErrorLog: errorLog,
         Handler: mux,
@@ -38,6 +53,6 @@ func main() {
 
     // run server from console as: w:\snippetbox>go run .\cmd\web\
     infoLog.Printf("Starting server on port %s \n", *ip)
-    err := srv.ListenAndServe(*ip, mux)
+    err := srv.ListenAndServe()
     errorLog.Fatal(err)
 }
