@@ -2,7 +2,6 @@ package main
 
 import (
     "net/http"
-    "log"
     "fmt"
     "strconv"
 )
@@ -14,7 +13,7 @@ func home(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    w.Write([]byte("Hello world"))
+    w.Write([]byte("Hello world from here"))
 }
 
 func showSnippet(w http.ResponseWriter, r *http.Request) {
@@ -46,15 +45,3 @@ func createSnippet(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte("Create snippet"))
 }
 
-func main() {
-    mux := http.NewServeMux()
-    mux.HandleFunc("/", home)
-    mux.HandleFunc("/snippet", showSnippet)
-    mux.HandleFunc("/snippet/create", createSnippet)
-
-    log.Println("Starting server on port 8080")
-
-    err := http.ListenAndServe(":8080", mux)
-    log.Fatal(err)
-
-}
