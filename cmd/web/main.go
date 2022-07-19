@@ -45,4 +45,5 @@ func main() {
     infoLog.Printf("Starting server on port %s \n", *ip)
     err := srv.ListenAndServe()
     errorLog.Fatal(err)
+
 }
