@@ -4,6 +4,8 @@ import (
     "net/http"
     "fmt"
     "strconv"
+    "html/template"
+    "log"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -13,7 +15,27 @@ func home(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    w.Write([]byte("Hello world from here"))
+    files := []string{
+        "./ui/html/home.page.tmpl",
+        "./ui/html/base.layout.tmpl",
+        "./ui/html/footer.partial.tmpl",
+    }
+
+    // Try to parse our html template file
+    ts, err := template.ParseFiles(files...)
+    if err != nil {
+        log.Println(err.Error())
+        http.Error(w, "Internal server error", 500)
+        return
+    }
+
+    // Try to execute the template. `nil` argument is for the data we pass to
+    // the template, here we don't pass anyting so its nil.
+    err = ts.Execute(w, nil)
+    if err != nil {
+        log.Println(err.Error())
+        http.Error(w, "Internal server error", 500)
+    }
 }
 
 func showSnippet(w http.ResponseWriter, r *http.Request) {
