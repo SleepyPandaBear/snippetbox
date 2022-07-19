@@ -33,22 +33,12 @@ func main() {
         errorLog: errorLog,
     }
 
-    mux := http.NewServeMux()
-    mux.HandleFunc("/", app.home)
-    mux.HandleFunc("/snippet", app.showSnippet)
-    mux.HandleFunc("/snippet/create", app.createSnippet)
-
-    // Serve static files under ./ui/static
-    fs := http.FileServer(http.Dir("./ui/static"))
-    // Add endpoint for the static files
-    mux.Handle("/static/", http.StripPrefix("/static", fs))
-
     // We need to create our own `Server` struct, so we can use our own error
     // logger.
     srv := &http.Server {
         Addr: *ip,
         ErrorLog: errorLog,
-        Handler: mux,
+        Handler: app.routes(), 
     }
 
     // run server from console as: w:\snippetbox>go run .\cmd\web\
