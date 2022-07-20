@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "bytes"
     "net/http"
     "runtime/debug"
 )
@@ -20,6 +21,10 @@ func (app *application) notFound(w http.ResponseWriter) {
     app.clientError(w, http.StatusNotFound)
 }
 
+// We get template from our cache. Rendering is seperated into two steps, first
+// we try to execute template into a buffer, and if this succedes we can render
+// it to the user. If this step fails we have an error and we can show some
+// error message to the user.
 func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
     ts, ok := app.templateCache[name]
 
@@ -28,8 +33,14 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
         return
     }
 
-    err := ts.Execute(w, td)
+    buf := &bytes.Buffer{}
+
+    // Execute template into the buffer first
+    err := ts.Execute(buf, td)
     if err != nil {
         app.serverError(w, err)
+        return
     }
+
+    buf.WriteTo(w)
 }
