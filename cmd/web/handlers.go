@@ -20,11 +20,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
         app.serverError(w, err)
         return
     }
-    for _, snippet := range s {
-        fmt.Fprintf(w, "%v\n", snippet)
-    }
 
-    /*
+    data := &templateData{Snippets: s}
+
     files := []string{
         "./ui/html/home.page.tmpl",
         "./ui/html/base.layout.tmpl",
@@ -40,11 +38,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
     // Try to execute the template. `nil` argument is for the data we pass to
     // the template, here we don't pass anyting so its nil.
-    err = ts.Execute(w, nil)
+    err = ts.Execute(w, data)
     if err != nil {
         app.serverError(w, err)
     }
-    */
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
