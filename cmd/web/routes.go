@@ -15,5 +15,5 @@ func (app *application) routes() http.Handler {
     // Add endpoint for the static files
     mux.Handle("/static/", http.StripPrefix("/static", fs))
 
-    return app.logRequest(secureHeaders(mux))
+    return app.recoverPanic(app.logRequest(secureHeaders(mux)))
 }
