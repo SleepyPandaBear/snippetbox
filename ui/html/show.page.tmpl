@@ -11,6 +11,8 @@
     </div>
     <pre><code>{{.Content}}</code></pre>
     <div class='metadata'>
+        <!-- we can also use pipeline: {{.Created | humanDate}}, this way we
+        can chain function together super easily-->
         <time>Created: {{humanDate .Created}}</time>
         <time>Expires: {{humanDate .Expires}}</time>
     </div>
