@@ -5,6 +5,7 @@ import (
     "log"
     "flag"
     "os"
+    "html/template"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
     "spbear/snippetbox/pkg/models/mysql"
@@ -14,6 +15,7 @@ type application struct {
     infoLog *log.Logger
     errorLog *log.Logger
     snippets *mysql.SnippetModel
+    templateCache map[string]*template.Template
 }
 
 func main() {
@@ -36,6 +38,11 @@ func main() {
 
     defer db.Close()
 
+    tc, err := newTemplateCache("./ui/html")
+    if err != nil {
+        errorLog.Fatal(err)
+    }
+
     // Our application struct so we can use our custom loggers from handlers.go
     // file. If our handlers are scattered across multiple files, we can use
     // function closures (first function accepts app and it returns another
@@ -45,6 +52,7 @@ func main() {
         infoLog: infoLog,
         errorLog: errorLog,
         snippets: &mysql.SnippetModel{DB: db},
+        templateCache: tc,
     }
 
     // We need to create our own `Server` struct, so we can use our own error

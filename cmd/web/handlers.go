@@ -4,7 +4,6 @@ import (
     "net/http"
     "fmt"
     "strconv"
-    "html/template"
     "spbear/snippetbox/pkg/models"
 )
 
@@ -20,28 +19,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
         app.serverError(w, err)
         return
     }
-
-    data := &templateData{Snippets: s}
-
-    files := []string{
-        "./ui/html/home.page.tmpl",
-        "./ui/html/base.layout.tmpl",
-        "./ui/html/footer.partial.tmpl",
-    }
-
-    // Try to parse our html template file
-    ts, err := template.ParseFiles(files...)
-    if err != nil {
-        app.serverError(w, err)
-        return
-    }
-
-    // Try to execute the template. `nil` argument is for the data we pass to
-    // the template, here we don't pass anyting so its nil.
-    err = ts.Execute(w, data)
-    if err != nil {
-        app.serverError(w, err)
-    }
+    
+    app.render(w, r, "home.page.tmpl", &templateData{Snippets: s})
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
@@ -63,25 +42,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    data := &templateData{Snippet: s}
-
-    files := []string{
-        "./ui/html/show.page.tmpl",
-        "./ui/html/base.layout.tmpl",
-        "./ui/html/footer.partial.tmpl",
-    }
-
-    ts, err := template.ParseFiles(files...)
-    if err != nil {
-        app.serverError(w, err)
-        return
-    }
-
-    err = ts.Execute(w, data)
-    if err != nil {
-        app.serverError(w, err)
-        return
-    }
+    app.render(w, r, "show.page.tmpl", &templateData{Snippet: s})
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
