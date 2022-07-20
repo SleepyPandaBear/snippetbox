@@ -4,7 +4,7 @@ import (
     "net/http"
     "fmt"
     "strconv"
-    //"html/template"
+    "html/template"
     "spbear/snippetbox/pkg/models"
 )
 
@@ -66,7 +66,25 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    fmt.Fprintf(w, "%v", s)
+    data := &templateData{Snippet: s}
+
+    files := []string{
+        "./ui/html/show.page.tmpl",
+        "./ui/html/base.layout.tmpl",
+        "./ui/html/footer.partial.tmpl",
+    }
+
+    ts, err := template.ParseFiles(files...)
+    if err != nil {
+        app.serverError(w, err)
+        return
+    }
+
+    err = ts.Execute(w, data)
+    if err != nil {
+        app.serverError(w, err)
+        return
+    }
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
