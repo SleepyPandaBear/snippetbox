@@ -40,7 +40,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-    w.Write([]byte("Create a new snippet"))
+    app.render(w, r, "create.page.tmpl", nil)
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
@@ -55,6 +55,4 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
     }
 
     http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
-
 }
-
