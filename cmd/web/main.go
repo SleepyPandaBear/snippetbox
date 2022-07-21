@@ -9,11 +9,14 @@ import (
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
     "spbear/snippetbox/pkg/models/mysql"
+    "time"
+    "github.com/golangcollege/sessions"
 )
 
 type application struct {
     infoLog *log.Logger
     errorLog *log.Logger
+    session *sessions.Session
     snippets *mysql.SnippetModel
     templateCache map[string]*template.Template
 }
@@ -22,6 +25,7 @@ func main() {
     // Parse value from command line (value must be dereferenced when used)
     ip := flag.String("ip", ":8080", "Ip address and port of the application")
     dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "DSN for the mysql database")
+    secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key (must be 32-bit long)")
     flag.Parse()
 
     // Our custom loggers, one for infos and one for errors.
@@ -43,6 +47,9 @@ func main() {
         errorLog.Fatal(err)
     }
 
+    session := sessions.New([]byte(*secret))
+    session.Lifetime = 12 * time.Hour
+
     // Our application struct so we can use our custom loggers from handlers.go
     // file. If our handlers are scattered across multiple files, we can use
     // function closures (first function accepts app and it returns another
@@ -51,6 +58,7 @@ func main() {
     app := &application {
         infoLog: infoLog,
         errorLog: errorLog,
+        session: session,
         snippets: &mysql.SnippetModel{DB: db},
         templateCache: tc,
     }
