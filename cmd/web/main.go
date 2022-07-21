@@ -97,4 +97,5 @@ func openDB(dsn string) (*sql.DB, error) {
         return nil, err
     }
     return db, nil
+
 }
