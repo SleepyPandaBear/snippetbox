@@ -1,6 +1,7 @@
 package main
 
 import (
+    "crypto/tls"
     "net/http"
     "log"
     "flag"
@@ -63,17 +64,24 @@ func main() {
         templateCache: tc,
     }
 
+    tlsConfig := &tls.Config{
+        PreferServerCipherSuites: true,
+        CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+    }
+
     // We need to create our own `Server` struct, so we can use our own error
     // logger.
     srv := &http.Server {
         Addr: *ip,
         ErrorLog: errorLog,
         Handler: app.routes(), 
+        TLSConfig: tlsConfig,
     }
 
     // run server from console as: w:\snippetbox>go run .\cmd\web\
     infoLog.Printf("Starting server on port %s \n", *ip)
-    err = srv.ListenAndServe()
+    // Key and cert are generated with generate_cert.go
+    err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
     errorLog.Fatal(err)
 }
 
