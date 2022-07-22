@@ -24,4 +24,5 @@ func (app *application) routes() http.Handler {
     mux.Get("/static/", http.StripPrefix("/static", fs))
 
     return app.recoverPanic(app.logRequest(secureHeaders(mux)))
+
 }
