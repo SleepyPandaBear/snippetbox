@@ -20,6 +20,7 @@ type application struct {
     session *sessions.Session
     snippets *mysql.SnippetModel
     templateCache map[string]*template.Template
+    users *mysql.UserModel
 }
 
 func main() {
@@ -50,6 +51,7 @@ func main() {
 
     session := sessions.New([]byte(*secret))
     session.Lifetime = 12 * time.Hour
+    session.Secure = true
 
     // Our application struct so we can use our custom loggers from handlers.go
     // file. If our handlers are scattered across multiple files, we can use
@@ -62,6 +64,7 @@ func main() {
         session: session,
         snippets: &mysql.SnippetModel{DB: db},
         templateCache: tc,
+        users: &mysql.UserModel{DB: db},
     }
 
     tlsConfig := &tls.Config{
