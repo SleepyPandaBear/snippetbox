@@ -52,8 +52,15 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
     }
 
     td.CurrentYear = time.Now().Year()
+    td.AuthenticatedUser = app.authenticatedUser(r)
 
     // Add flash message to the template data if one exists.
     td.Flash = app.session.PopString(r, "flash")
+
     return td
+}
+
+func (app *application) authenticatedUser(r *http.Request) int {
+    // If the value of userID is empty or non integer, GetInt returns 0
+    return app.session.GetInt(r, "userID")
 }
