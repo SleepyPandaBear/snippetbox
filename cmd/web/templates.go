@@ -14,7 +14,7 @@ type templateData struct {
     Form *forms.Form
     Snippet *models.Snippet
     Snippets []*models.Snippet
-    AuthenticatedUser int
+    AuthenticatedUser *models.User 
     CSRFToken string
 }
 
