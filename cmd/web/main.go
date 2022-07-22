@@ -52,6 +52,7 @@ func main() {
     session := sessions.New([]byte(*secret))
     session.Lifetime = 12 * time.Hour
     session.Secure = true
+    session.SameSite = http.SameSiteStrictMode
 
     // Our application struct so we can use our custom loggers from handlers.go
     // file. If our handlers are scattered across multiple files, we can use
