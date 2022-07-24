@@ -26,6 +26,18 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
     app.render(w, r, "home.page.tmpl", &templateData{Snippets: s})
 }
 
+func (app *application) profile(w http.ResponseWriter, r *http.Request) {
+    userID := app.session.GetInt(r, "userID")
+
+    user, err := app.users.Get(userID)
+    if err != nil {
+        app.serverError(w, err)
+        return
+    }
+
+    app.render(w, r, "profile.page.tmpl", &templateData{AuthenticatedUser: user})
+}
+
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
     // r.URL.Quury().Get("id") returns value of id from url - /snippet?id=123
     // returns 123

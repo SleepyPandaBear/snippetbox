@@ -20,6 +20,7 @@ func (app *application) routes() http.Handler {
 
     mux.Get("/ping", http.HandlerFunc(ping))
     mux.Get("/about", app.session.Enable(noSurf(app.authenticate(http.HandlerFunc(app.about)))))
+    mux.Get("/user/profile", app.session.Enable(noSurf(app.authenticate(app.requireAuthenticatedUser(http.HandlerFunc(app.profile))))))
 
     // Serve static files under ./ui/static
     fs := http.FileServer(http.Dir("./ui/static"))
