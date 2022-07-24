@@ -57,6 +57,5 @@ func TestUserModelGet(t *testing.T) {
                 t.Errorf("want %v; got %v", tt.wantUser, user)
             }
         })
-
     }
 }
