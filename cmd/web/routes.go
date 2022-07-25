@@ -22,6 +22,9 @@ func (app *application) routes() http.Handler {
     mux.Get("/about", app.session.Enable(noSurf(app.authenticate(http.HandlerFunc(app.about)))))
     mux.Get("/user/profile", app.session.Enable(noSurf(app.authenticate(app.requireAuthenticatedUser(http.HandlerFunc(app.profile))))))
 
+    mux.Get("/user/change-password", app.session.Enable(noSurf(app.authenticate(app.requireAuthenticatedUser(http.HandlerFunc(app.changePasswordForm))))))
+    mux.Post("/user/change-password", app.session.Enable(noSurf(app.authenticate(app.requireAuthenticatedUser(http.HandlerFunc(app.changePassword))))))
+
     // Serve static files under ./ui/static
     fs := http.FileServer(http.Dir("./ui/static"))
     // Add endpoint for the static files
