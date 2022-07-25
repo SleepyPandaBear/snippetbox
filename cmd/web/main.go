@@ -20,6 +20,7 @@ type contextKey string
 var contextKeyUser = contextKey("user")
 
 type application struct {
+    debugMode bool
     infoLog *log.Logger
     errorLog *log.Logger
     session *sessions.Session
@@ -42,6 +43,7 @@ func main() {
     ip := flag.String("ip", ":8080", "Ip address and port of the application")
     dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "DSN for the mysql database")
     secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key (must be 32-bit long)")
+    debug := flag.Bool("debug", false, "Debug mode (information is printed on the website)")
     flag.Parse()
 
     // Our custom loggers, one for infos and one for errors.
@@ -74,6 +76,7 @@ func main() {
     // function with ResponseWriter and Request) and pass application struct as
     // argument.
     app := &application {
+        debugMode: *debug,
         infoLog: infoLog,
         errorLog: errorLog,
         session: session,
