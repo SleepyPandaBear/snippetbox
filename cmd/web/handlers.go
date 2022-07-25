@@ -201,6 +201,12 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 
     app.session.Put(r, "userID", id)
 
+    wantedURL := app.session.PopString(r, "wantedURL")
+    if wantedURL != "" {
+        http.Redirect(w, r, wantedURL, http.StatusSeeOther)
+        return
+    }
+
     http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
 }
 
